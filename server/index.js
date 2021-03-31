@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const cors = require('cors')
+const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
 // const session = require('express-session');
@@ -10,22 +10,16 @@ const port = process.env.PORT || 3000;
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+require('dotenv').config();
 
 module.exports = app;
-
-// Development Secrets
-if (process.env.NODE_ENV !== 'production') require('../secrets');
-
-const uri = `mongodb+srv://xanderbakx:${process.env.PASSWORD}@documents.rqw8b.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority`;
-
-
 
 const buildApp = () => {
   // Logging middleware
   app.use(morgan('dev'));
   // Security for HTTP requests
   app.use(helmet());
-  app.use(cors())
+  app.use(cors());
 
   // Body parsing middleware
   app.use(express.json());
@@ -52,19 +46,22 @@ const buildApp = () => {
   // Static middleware
   app.use(express.static(path.join(__dirname, '..', 'public')));
 
-    // New socket connection
-    io.on('connection', (socket) => {
-      console.log(`New connection: ${socket.id}`);
-      socket.on('update-content', (content) => {
-        // Broadcast event
-        io.emit('update-content', content);
-      });
-      socket.on('disconnect', () => {
-        console.log('user disconnected');
-      });
+  // New socket connection
+  io.on('connection', (socket) => {
+    console.log(`New connection: ${socket.id}`);
+    socket.on('update-content', (content) => {
+      // Broadcast event
+      io.emit('update-content', content);
     });
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+  });
 
-    mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
   // 404 Error
   app.use((req, res, next) => {
@@ -83,6 +80,7 @@ const buildApp = () => {
   });
 
   // Error handling
+  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     console.error(err);
     console.error(err.stack);
@@ -90,14 +88,10 @@ const buildApp = () => {
   });
 };
 
-
-
 // Listening on PORT
 const listening = () => {
   // Server
-  const server = http.listen(port, () =>
-    console.log(`🚢 🚢 Listening on port ${port} 🚢 🚢`)
-  );
+  http.listen(port, () => console.log(`🚢 🚢 Listening on port ${port} 🚢 🚢`));
 };
 
 async function bootApp() {

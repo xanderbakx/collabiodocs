@@ -13,4 +13,4 @@ bundle.js
 bundle.js.map
 
 # Secrets
-secrets.js
+.env
