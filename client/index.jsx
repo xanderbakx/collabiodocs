@@ -6,7 +6,7 @@ import history from './history';
 // import store from './store';
 import App from './app';
 
-// import '../public/index.css';
+import '../public/index.css';
 
 render(
   // <Provider store={store}>

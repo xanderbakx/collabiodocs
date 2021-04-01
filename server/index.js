@@ -2,15 +2,16 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+// const { auth } = require('express-openid-connect');
 const mongoose = require('mongoose');
 const path = require('path');
-// const session = require('express-session');
-const port = process.env.PORT || 3000;
-// const passport = require('passport');
+
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 require('dotenv').config();
+
+const port = process.env.PORT || 3000;
 
 module.exports = app;
 
@@ -25,26 +26,24 @@ const buildApp = () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Session middleware
-  // app.use(
-  //   session({
-  //     secret: process.env.SESSION_SECRET || 'a big secret',
-  //     store: dbStore,
-  //     resave: false,
-  //     saveUninitialized: false,
-  //   })
-  // );
+  // Auth
 
-  // Initialize Passport
-  // app.use(passport.initialize());
-  // app.use(passport.session());
-
-  // auth and api
-  // app.use('/auth', require('./auth'));
+  // API Routes
   app.use('/api', require('./api'));
+  app.use('/auth', require('./auth'));
 
   // Static middleware
   app.use(express.static(path.join(__dirname, '..', 'public')));
+
+  mongoose.connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  // index.html
+  app.use('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public/index.html'));
+  });
 
   // New socket connection
   io.on('connection', (socket) => {
@@ -58,11 +57,7 @@ const buildApp = () => {
     });
   });
 
-  mongoose.connect(process.env.DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
+  // Error handling
   // 404 Error
   app.use((req, res, next) => {
     if (path.extname(req.path).length) {
@@ -73,13 +68,6 @@ const buildApp = () => {
       next();
     }
   });
-
-  // index.html
-  app.use('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public/index.html'));
-  });
-
-  // Error handling
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     console.error(err);
