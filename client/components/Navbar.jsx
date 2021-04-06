@@ -37,7 +37,7 @@ const Navbar = () => {
           <Typography variant="h6" className={classes.title}>
             News
           </Typography>
-          <Button color="inherit">Hello, user</Button>
+          <Button color="inherit">Sign Up</Button>
         </Toolbar>
       </AppBar>
     </div>

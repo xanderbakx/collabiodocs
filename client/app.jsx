@@ -1,11 +1,11 @@
 import React from 'react';
-import { Navbar, Header, SyncEditor } from './components';
+import { Navbar } from './components';
+import Routes from './routes';
 
 const App = () => (
   <div>
     <Navbar />
-    <Header />
-    <SyncEditor />
+    <Routes />
   </div>
 );
 
