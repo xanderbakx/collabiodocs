@@ -1,9 +1,9 @@
 import React from 'react';
-import SyncEditor from './components/SyncEditor';
-import Header from './components/Header';
+import { Navbar, Header, SyncEditor } from './components';
 
 const App = () => (
   <div>
+    <Navbar />
     <Header />
     <SyncEditor />
   </div>

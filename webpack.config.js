@@ -1,20 +1,16 @@
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === "development"; // eslint-disable-line
 
 module.exports = {
-  mode: isDev ? 'development' : 'production',
-  entry: [
-    '@babel/polyfill',
-    './client/index.jsx',
-  ],
+  mode: isDev ? "development" : "production",
+  entry: ["@babel/polyfill", "./client/index.jsx"],
   output: {
     path: __dirname,
-    // publicPath: '/',
-    filename: './public/bundle.js',
+    filename: "./public/bundle.js",
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: [".js", ".jsx"],
   },
-  devtool: 'source-maps',
+  devtool: "source-maps",
   watchOptions: {
     ignored: /node_modules/,
   },
@@ -23,11 +19,11 @@ module.exports = {
       {
         test: /.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
+        loader: "babel-loader",
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
