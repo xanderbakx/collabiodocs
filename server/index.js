@@ -6,13 +6,11 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const http = require('http').Server(app);
-const https = require('https');
-
 const key = fs.readFileSync(path.join(__dirname, '/key.pem'));
 const cert = fs.readFileSync(path.join(__dirname, '/cert.pem'));
-const server = https.createServer({ key, cert }, app);
-const io = require('socket.io')(http);
+// const http = require('http').Server(app);
+const https = require('https').Server({ key, cert }, app);
+const io = require('socket.io')(https);
 const db = require('./db');
 require('dotenv').config();
 
@@ -24,7 +22,11 @@ const buildApp = () => {
   // Logging middleware
   app.use(morgan('dev'));
   // Security for HTTP requests
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    }),
+  );
   app.use(cors());
 
   // Body parsing middleware
@@ -77,7 +79,7 @@ const buildApp = () => {
 // Listening on PORT
 const listening = () => {
   // Server
-  server.listen(port, () => console.log(`🚢 🚢 Listening on port ${port} 🚢 🚢`));
+  https.listen(port, () => console.log(`🚢 🚢 Listening on port ${port} 🚢 🚢`));
 };
 
 async function bootApp() {

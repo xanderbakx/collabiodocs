@@ -12,7 +12,7 @@ import styled from 'styled-components';
 const port = process.env.PORT || 3000;
 
 // Client side socket
-const socket = io(`http://localhost:${port}`);
+const socket = io(`https://localhost:${port}`);
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -93,7 +93,7 @@ const SyncEditor = () => {
                   const mark = HOTKEYS[hotkey];
                   toggleMark(editor, mark);
                 }
-              })
+              });
             }}
           />
         </Slate>
