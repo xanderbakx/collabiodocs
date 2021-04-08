@@ -2,7 +2,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
   mode: isDev ? "development" : "production",
-  entry: ["@babel/polyfill", "./client/index.jsx"],
+  entry: ["@babel/polyfill", "./client/app.jsx"],
   output: {
     path: __dirname,
     filename: "./public/bundle.js",
