@@ -34,7 +34,6 @@ const buildApp = () => {
   app.use(express.urlencoded({ extended: true }));
 
   // API Routes
-  app.use('/auth', require('./auth'));
   app.use('/api', require('./api'));
 
   // Static middleware
