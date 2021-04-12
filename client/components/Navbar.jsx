@@ -1,6 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
+import { useAuth0 } from '@auth0/auth0-react';
+
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Navbar = () => {
+  const { user, isAuthenticated } = useAuth0();
   const classes = useStyles();
   return (
     <div>
@@ -38,8 +40,17 @@ const Navbar = () => {
           <Typography variant="h6" className={classes.title}>
             Docs Clone
           </Typography>
-          <Login />
-          <Logout />
+          {isAuthenticated ? (
+            <>
+              <h3>
+                Hi,
+                {user.name}
+              </h3>
+              <Logout />
+            </>
+          ) : (
+            <Login />
+          )}
         </Toolbar>
       </AppBar>
     </div>
