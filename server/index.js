@@ -8,11 +8,17 @@ const fs = require('fs');
 const app = express();
 const key = fs.readFileSync(path.join(__dirname, '/key.pem'));
 const cert = fs.readFileSync(path.join(__dirname, '/cert.pem'));
-// const http = require('http').Server(app);
-const https = require('https').Server({ key, cert }, app);
-const io = require('socket.io')(https);
-const db = require('./db');
+let server;
 require('dotenv').config();
+
+if (process.env.NODE_ENV === 'development') {
+  server = require('https').createServer({ key, cert }, app);
+} else if (process.env.NODE_ENV === 'production') {
+  server = require('http').Server(app);
+}
+
+const io = require('socket.io')(server);
+const db = require('./db');
 
 const port = process.env.PORT || 3000;
 
@@ -78,7 +84,7 @@ const buildApp = () => {
 // Listening on PORT
 const listening = () => {
   // Server
-  https.listen(port, () => console.log(`🚢 🚢 Listening on port ${port} 🚢 🚢`));
+  server.listen(port, () => console.log(`🚢 🚢 Listening on port ${port} 🚢 🚢`));
 };
 
 async function bootApp() {
