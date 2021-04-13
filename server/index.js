@@ -6,12 +6,12 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const key = fs.readFileSync(path.join(__dirname, '/key.pem'));
-const cert = fs.readFileSync(path.join(__dirname, '/cert.pem'));
 let server;
 require('dotenv').config();
 
 if (process.env.NODE_ENV === 'development') {
+  const key = fs.readFileSync(path.join(__dirname, '/key.pem'));
+  const cert = fs.readFileSync(path.join(__dirname, '/cert.pem'));
   server = require('https').createServer({ key, cert }, app);
 } else if (process.env.NODE_ENV === 'production') {
   server = require('http').Server(app);
