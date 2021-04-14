@@ -7,12 +7,12 @@ import { createEditor, Editor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import isHotKey from 'is-hotkey';
 import io from 'socket.io-client';
+
+import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 
-const port = process.env.PORT || 3000;
-
 // Client side socket
-const socket = io(`https://localhost:${port}`);
+const socket = io();
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -81,6 +81,14 @@ const SyncEditor = () => {
 
   return (
     <>
+      <Button
+        variant="contained"
+        type="submit"
+        onClick={() => console.log('clicked')}
+      >
+        Save
+      </Button>
+
       <Wrapper>
         <Slate editor={editor} value={value} onChange={handleChange}>
           <Editable
