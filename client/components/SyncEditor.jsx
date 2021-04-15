@@ -10,8 +10,8 @@ import { createEditor, Editor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import isHotKey from 'is-hotkey';
 import io from 'socket.io-client';
-import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
+import { Button } from './styles';
 import { getSingleDocument, updateSingleDocument } from '../store';
 
 // Client side socket
@@ -31,9 +31,6 @@ const SyncEditor = ({
 }) => {
   const params = useParams();
 
-  // Create Slate editor object
-  const editor = useMemo(() => withReact(createEditor()), []);
-
   // Set initial document value
   const initialValue = [
     {
@@ -44,6 +41,22 @@ const SyncEditor = ({
 
   // State of value of editor
   const [slateValue, setSlateValue] = useState(initialValue);
+
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+  // Create Slate editor object
+  const editor = useMemo(() => withReact(createEditor()), []);
+
+  // Socket Connections
+  useEffect(() => {
+    socket.once('init', (value) => {
+      setSlateValue(value);
+    });
+
+    socket.on('update-content', (data) => {
+      setSlateValue(data);
+    });
+  });
 
   // Display document content from specified ID
   useEffect(() => {
@@ -72,19 +85,7 @@ const SyncEditor = ({
     setSlateValue(slateValue);
   };
 
-  useEffect(() => {
-    socket.once('init', (value) => {
-      setSlateValue(value);
-    });
-
-    socket.on('update-content', (data) => {
-      setSlateValue(data);
-    });
-  });
-
-  const renderElement = useCallback((props) => <Element {...props} />, []);
-  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-
+  // SlateJS Specific
   const isMarkActive = (editor, format) => {
     const marks = Editor.marks(editor);
     return marks ? marks[format] === true : false;
@@ -102,7 +103,7 @@ const SyncEditor = ({
 
   return (
     <>
-      <Button variant="contained" type="submit" onClick={() => handleSave()}>
+      <Button variant="contained" type="submit" onClick={handleSave}>
         Save
       </Button>
 
@@ -131,7 +132,7 @@ const Wrapper = styled.div`
   background-color: ghostwhite;
   position: absolute;
   width: 820px;
-  height: 1100px;
+  height: 900px;
   left: 49.5%;
   margin: 30px 0 50px -410px;
   padding: 30px 50px;

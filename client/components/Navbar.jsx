@@ -1,23 +1,17 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import Button from '@material-ui/core/Button';
+import { Button } from './styles';
 import { Login, Logout } from '.';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
@@ -26,28 +20,38 @@ const useStyles = makeStyles((theme) => ({
 
 const Navbar = () => {
   const { user, isAuthenticated } = useAuth0();
+  let links;
+
+  const getLinks = () => {
+    links = [
+      { id: 1, name: 'Documents', path: '/documents' },
+      { id: 2, name: `${user.name}`, path: '/profile' },
+    ];
+  };
+
+  // TODO: IS THIS HACKY?
+  if (isAuthenticated) getLinks();
+
   const classes = useStyles();
   return (
     <div>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" className={classes.title}>
             Docs Clone
           </Typography>
-          <Button type="submit">
-            <Link to="/documents">My Documents</Link>
-          </Button>
           {isAuthenticated ? (
             <>
-              <h3>{`Hi, ${user.name}`}</h3>
+              {links.map((link) => (
+                <NavLink
+                  key={link.id}
+                  to={link.path}
+                  exact
+                  activeClassName="current"
+                >
+                  <Button>{link.name}</Button>
+                </NavLink>
+              ))}
               <Logout />
             </>
           ) : (
@@ -59,8 +63,4 @@ const Navbar = () => {
   );
 };
 
-const mapState = (state) => ({
-  isLoggedIn: state.user,
-});
-
-export default connect(mapState)(Navbar);
+export default Navbar;

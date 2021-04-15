@@ -1,12 +1,14 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
 
-const Header = () => (
-  <Title>Collaborative Document</Title>
-)
+const Header = ({ singleDocument }) => <Title>{singleDocument.fileName}</Title>;
 
 const Title = styled.h1`
   text-align: center;
-`
+`;
+const mapState = (state) => ({
+  singleDocument: state.singleDocument,
+});
 
-export default Header
+export default connect(mapState, null)(Header);
