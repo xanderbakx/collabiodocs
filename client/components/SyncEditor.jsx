@@ -1,15 +1,18 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-shadow */
 import React, {
   useEffect, useMemo, useState, useCallback,
 } from 'react';
+import { useParams } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { createEditor, Editor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import isHotKey from 'is-hotkey';
 import io from 'socket.io-client';
-
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
+import { getSingleDocument, updateSingleDocument } from '../store';
 
 // Client side socket
 const socket = io();
@@ -21,43 +24,64 @@ const HOTKEYS = {
   'mod+`': 'code',
 };
 
-const SyncEditor = () => {
+const SyncEditor = ({
+  singleDocument,
+  getSingleDocument,
+  updateSingleDocument,
+}) => {
+  const params = useParams();
+
   // Create Slate editor object
   const editor = useMemo(() => withReact(createEditor()), []);
 
+  // Set initial document value
   const initialValue = [
     {
       type: 'paragraph',
       children: [{ text: '' }],
     },
   ];
+
   // State of value of editor
-  const [value, setValue] = useState(
-    // [localStorage.getItem("content")] ||
-    initialValue,
-  );
+  const [slateValue, setSlateValue] = useState(initialValue);
+
+  // Display document content from specified ID
+  useEffect(() => {
+    getSingleDocument(params.id);
+  }, []);
+
+  // Set state for document body
+  useEffect(() => {
+    if (!singleDocument.body) return;
+    setSlateValue(JSON.parse(singleDocument.body));
+  }, [singleDocument._id]);
 
   // Change handler for document
   const handleChange = (newValue) => {
-    // console.log("change made");
     // State set to newValue
-    setValue(newValue);
+    setSlateValue(newValue);
+    console.log('value', newValue);
     // TODO: Save content value in db
-    const content = JSON.stringify(newValue);
-    // localStorage.getItem("content", content);
-    console.log('content', content);
+    // const content = JSON.stringify(newValue);
+    // console.log('content', content);
     // Emit that new value from server to clients
     socket.emit('update-content', newValue);
   };
 
+  // Save handler to update content in DB
+  const handleSave = () => {
+    const { id } = params;
+    updateSingleDocument(id, { body: JSON.stringify(slateValue) });
+    setSlateValue(slateValue);
+  };
+
   useEffect(() => {
     socket.once('init', (value) => {
-      setValue(value);
+      setSlateValue(value);
     });
 
     socket.on('update-content', (data) => {
-      // console.log('update', data)
-      setValue(data);
+      setSlateValue(data);
     });
   });
 
@@ -81,16 +105,12 @@ const SyncEditor = () => {
 
   return (
     <>
-      <Button
-        variant="contained"
-        type="submit"
-        onClick={() => console.log('clicked')}
-      >
+      <Button variant="contained" type="submit" onClick={() => handleSave()}>
         Save
       </Button>
 
       <Wrapper>
-        <Slate editor={editor} value={value} onChange={handleChange}>
+        <Slate editor={editor} value={slateValue} onChange={handleChange}>
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
@@ -157,4 +177,13 @@ const Leaf = ({ attributes, children, leaf }) => {
   return <span {...attributes}>{children}</span>;
 };
 
-export default SyncEditor;
+const mapState = (state) => ({
+  singleDocument: state.singleDocument,
+});
+
+const mapDispatch = (dispatch) => ({
+  getSingleDocument: (id) => dispatch(getSingleDocument(id)),
+  updateSingleDocument: (id, document) => dispatch(updateSingleDocument(id, document)),
+});
+
+export default connect(mapState, mapDispatch)(SyncEditor);
