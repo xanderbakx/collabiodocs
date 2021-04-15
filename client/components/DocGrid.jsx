@@ -1,17 +1,23 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-shadow */
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
 
 import { getDocuments } from '../store';
 
 const DocGrid = ({ documents, getDocuments }) => {
   useEffect(() => {
     getDocuments([]);
-  }, []);
+  }, [getDocuments]);
+
   return (
     <>
       <h1>DocGrid</h1>
+      <Button type="submit" variant="contained">
+        New Document
+      </Button>
       <div>
         {documents.map((document) => {
           console.log('document', document);
@@ -19,6 +25,9 @@ const DocGrid = ({ documents, getDocuments }) => {
             <div key={document._id}>
               <h1>{document.fileName}</h1>
               <h1>{document.body}</h1>
+              <Button type="submit" variant="contained">
+                <Link to={`/document/${document._id}`}>Open</Link>
+              </Button>
             </div>
           );
         })}
@@ -28,7 +37,7 @@ const DocGrid = ({ documents, getDocuments }) => {
 };
 
 const mapState = (state) => ({
-  documents: state.documents,
+  documents: state.allDocuments,
 });
 
 const mapDispatch = (dispatch) => ({

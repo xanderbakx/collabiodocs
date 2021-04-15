@@ -2,13 +2,15 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import documents from './documents';
+import allDocuments from './allDocuments';
+import singleDocument from './singleDocument';
 
-const reducer = combineReducers({ documents });
+const reducer = combineReducers({ allDocuments, singleDocument });
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({ collapsed: true })),
 );
 const store = createStore(reducer, middleware);
 
 export default store;
-export * from './documents.js';
+export * from './allDocuments.js';
+export * from './singleDocument.js';
