@@ -1,9 +1,4 @@
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
-
-export const StyledLink = styled(NavLink)`
-  text-decoration: none;
-`;
 
 export const Button = styled.button`
   display: inline-block;
@@ -16,6 +11,22 @@ export const Button = styled.button`
   font-weight: 300;
   color: black;
   text-align: center;
+  transition: all 0.2s;
+  cursor: pointer;
+  &:hover {
+    color: #000000;
+    background-color: #ffffff;
+  }
+`;
+
+export const ToolbarButton = styled.button`
+  display: inline-block;
+  border: none;
+  background-color: #e3e3e3;
+  margin: 0 0.3em;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
   transition: all 0.2s;
   cursor: pointer;
   &:hover {
