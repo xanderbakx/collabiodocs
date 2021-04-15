@@ -9,11 +9,10 @@ export const Button = styled.button`
   display: inline-block;
   padding: 0.6em 1.2em;
   border: 0.1em solid #ffffff;
-  margin: 0 0.3em 0.3em 0;
+  margin: 0 0.3em;
   border-radius: 0.12em;
   box-sizing: border-box;
   text-decoration: none;
-  font-family: "Roboto", sans-serif;
   font-weight: 300;
   color: black;
   text-align: center;
