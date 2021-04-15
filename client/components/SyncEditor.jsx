@@ -61,9 +61,6 @@ const SyncEditor = ({
     // State set to newValue
     setSlateValue(newValue);
     console.log('value', newValue);
-    // TODO: Save content value in db
-    // const content = JSON.stringify(newValue);
-    // console.log('content', content);
     // Emit that new value from server to clients
     socket.emit('update-content', newValue);
   };
