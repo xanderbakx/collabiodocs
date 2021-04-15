@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
+import { Button } from './styles';
 
 import { getDocuments } from '../store';
 
@@ -25,9 +25,11 @@ const DocGrid = ({ documents, getDocuments }) => {
             <div key={document._id}>
               <h1>{document.fileName}</h1>
               <h1>{document.body}</h1>
-              <Button type="submit" variant="contained">
-                <Link to={`/document/${document._id}`}>Open</Link>
-              </Button>
+              <Link to={`/document/${document._id}`}>
+                <Button type="submit" variant="contained">
+                  Open
+                </Button>
+              </Link>
             </div>
           );
         })}
