@@ -10,7 +10,7 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"],
   },
-  devtool: "source-maps",
+  devtool: "source-map",
   watchOptions: {
     ignored: /node_modules/,
   },
