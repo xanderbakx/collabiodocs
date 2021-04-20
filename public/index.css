@@ -55,3 +55,11 @@ img {
   /* Support for IE. */
   font-feature-settings: "liga";
 }
+
+.white {
+  color: white;
+}
+
+.black {
+  color: black;
+}
