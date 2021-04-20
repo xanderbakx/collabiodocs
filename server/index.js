@@ -54,9 +54,12 @@ const buildApp = () => {
   io.on('connection', (socket) => {
     console.log(`New connection: ${socket.id}`);
     socket.on('update-content', (content) => {
+      console.log('content --->', content[0]);
       // Broadcast event
+
       io.emit('update-content', content);
     });
+
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });

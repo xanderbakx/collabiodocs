@@ -5,25 +5,25 @@ import React, {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { createEditor, Editor } from 'slate';
+import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import isHotKey from 'is-hotkey';
 import io from 'socket.io-client';
 import styled from 'styled-components';
-import MarkButton, { Element, Leaf } from '../slateConfig';
+import {
+  MarkButton,
+  BlockButton,
+  Element,
+  Leaf,
+  HOTKEYS,
+  toggleMark,
+} from '../slateConfig';
 import Header from './Header';
 import { Button } from '../styles/buttons';
 import { getSingleDocument, updateSingleDocument } from '../store';
 
 // Client side socket
 const socket = io();
-
-const HOTKEYS = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
-};
 
 const SyncEditor = ({
   singleDocument,
@@ -32,78 +32,67 @@ const SyncEditor = ({
 }) => {
   const params = useParams();
 
+  // Display document content from specified ID
+  useEffect(() => {
+    getSingleDocument(params.id);
+  }, [params.id]);
+
   // Set initial document value
   const initialValue = [
     {
       type: 'paragraph',
-      children: [{ text: '' }],
+      children: [{ text: 'hello' }],
     },
   ];
 
   // State of value of editor
   const [slateValue, setSlateValue] = useState(initialValue);
-  const renderElement = useCallback((props) => <Element {...props} />, []);
-  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-  // Create Slate editor object
-  const editor = useMemo(() => withReact(createEditor()), []);
-
-  // Socket Connections
-  useEffect(() => {
-    socket.once('init', (value) => {
-      setSlateValue(value);
-    });
-
-    socket.on('update-content', (data) => {
-      setSlateValue(data);
-    });
-  });
-
-  // Display document content from specified ID
-  useEffect(() => {
-    getSingleDocument(params.id);
-  }, []);
 
   // Set state for document body
   useEffect(() => {
     if (!singleDocument.body) return;
+    console.log(singleDocument.body);
     setSlateValue(JSON.parse(singleDocument.body));
-  }, [singleDocument._id]);
-
-  // Change handler for document
-  const handleChange = (newValue) => {
-    // State set to newValue
-    setSlateValue(newValue);
-    // console.log('value', newValue);
-    // Emit that new value from server to clients
-    socket.emit('update-content', newValue);
-  };
+  }, []);
 
   // Save handler to update content in DB
   const handleSave = () => {
     const { id } = params;
+    console.log('saved -->', slateValue);
+    // setSlateValue(slateValue);
     updateSingleDocument(id, { body: JSON.stringify(slateValue) });
-    setSlateValue(slateValue);
+    socket.emit('update-content', slateValue);
   };
 
-  // SlateJS Specific
-  const isMarkActive = (editor, format) => {
-    const marks = Editor.marks(editor);
-    return marks ? marks[format] === true : false;
-  };
+  useEffect(() => {
+    // Socket Connections
+    socket.on('update-content', (value) => {
+      console.log('socket value --->', value);
+      setSlateValue(value);
+    });
 
-  const toggleMark = (editor, format) => {
-    const isActive = isMarkActive(editor, format);
+    return () => {
+      socket.off('update-content');
+    };
+  }, []);
 
-    if (isActive) {
-      Editor.removeMark(editor, format);
-    } else {
-      Editor.addMark(editor, format, true);
-    }
-  };
+  // Create Slate editor object
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+  const editor = useMemo(() => withReact(createEditor()), []);
 
   return (
     <>
-      <Slate editor={editor} value={slateValue} onChange={handleChange}>
+      <Slate
+        editor={editor}
+        value={slateValue}
+        onChange={(value) => {
+          console.log('change', value);
+          setSlateValue(value);
+          // Emit that new value from server to clients
+          socket.emit('update-content', value);
+        }}
+      >
         <ToolbarWrapper>
           <Button variant="contained" type="submit" onClick={handleSave}>
             Save
@@ -111,13 +100,21 @@ const SyncEditor = ({
           <MarkButton format="bold" icon="format_bold" />
           <MarkButton format="italic" icon="format_italic" />
           <MarkButton format="underline" icon="format_underlined" />
+          <MarkButton format="code" icon="code" />
+
+          <BlockButton format="heading-one" icon="looks_one" />
+          <BlockButton format="heading-two" icon="looks_two" />
+          <BlockButton format="block-quote" icon="format_quote" />
+          <BlockButton format="numbered-list" icon="format_list_numbered" />
+          <BlockButton format="bulleted-list" icon="format_list_bulleted" />
           <Header />
         </ToolbarWrapper>
         <Wrapper>
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
-            placeholder="Start typing..."
+            spellCheck
+            autoFocus
             onKeyDown={(event) => {
               Object.keys(HOTKEYS).forEach((hotkey) => {
                 if (isHotKey(hotkey, event)) {
