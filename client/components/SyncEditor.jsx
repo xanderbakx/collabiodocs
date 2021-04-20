@@ -32,69 +32,66 @@ const SyncEditor = ({
 }) => {
   const params = useParams();
 
+  // Display document content from specified ID
+  useEffect(() => {
+    getSingleDocument(params.id);
+  }, [params.id]);
+
   // Set initial document value
   const initialValue = [
     {
       type: 'paragraph',
-      children: [{ text: '' }],
+      children: [{ text: 'hello' }],
     },
   ];
 
   // State of value of editor
   const [slateValue, setSlateValue] = useState(initialValue);
 
-  // Display document content from specified ID
-  useEffect(() => {
-    getSingleDocument(params.id);
-    console.log('getSingle');
-  }, []);
-
   // Set state for document body
   useEffect(() => {
     if (!singleDocument.body) return;
+    console.log(singleDocument.body);
     setSlateValue(JSON.parse(singleDocument.body));
-    console.log('set value', singleDocument.body);
-  }, [singleDocument._id]);
+  }, []);
+
+  // Save handler to update content in DB
+  const handleSave = () => {
+    const { id } = params;
+    console.log('saved -->', slateValue);
+    // setSlateValue(slateValue);
+    updateSingleDocument(id, { body: JSON.stringify(slateValue) });
+    socket.emit('update-content', slateValue);
+  };
+
+  useEffect(() => {
+    // Socket Connections
+    socket.on('update-content', (value) => {
+      console.log('socket value --->', value);
+      setSlateValue(value);
+    });
+
+    return () => {
+      socket.off('update-content');
+    };
+  }, []);
 
   // Create Slate editor object
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withReact(createEditor()), []);
 
-  // Socket Connections
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected', socket.connected);
-    });
-    socket.on('update-content', (data) => {
-      console.log('socket data', data);
-      setSlateValue(data);
-    });
-    console.log('socket');
-  }, []);
-
-  // Change handler for document
-  const handleChange = (newValue) => {
-    // State set to newValue
-    setSlateValue(newValue);
-    // Emit that new value from server to clients
-    socket.emit('update-content', newValue);
-    console.log('handleChange', slateValue);
-  };
-
-  // Save handler to update content in DB
-  const handleSave = () => {
-    const { id } = params;
-    updateSingleDocument(id, { body: JSON.stringify(slateValue) });
-    setSlateValue(slateValue);
-  };
-
   return (
     <>
       <Slate
         editor={editor}
         value={slateValue}
-        onChange={() => handleChange(slateValue)}
+        onChange={(value) => {
+          console.log('change', value);
+          setSlateValue(value);
+          // Emit that new value from server to clients
+          socket.emit('update-content', value);
+        }}
       >
         <ToolbarWrapper>
           <Button variant="contained" type="submit" onClick={handleSave}>
