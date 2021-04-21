@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import isHotKey from 'is-hotkey';
@@ -18,7 +19,6 @@ import {
   HOTKEYS,
   toggleMark,
 } from '../slateConfig';
-import Header from './Header';
 import { Button } from '../styles/buttons';
 import { getSingleDocument, updateSingleDocument } from '../store';
 
@@ -53,7 +53,7 @@ const SyncEditor = ({
     if (!singleDocument.body) return;
     console.log(singleDocument.body);
     setSlateValue(JSON.parse(singleDocument.body));
-  }, []);
+  }, [singleDocument._id]);
 
   // Save handler to update content in DB
   const handleSave = () => {
@@ -83,6 +83,10 @@ const SyncEditor = ({
 
   return (
     <>
+      <Helmet>
+        <title>{singleDocument.fileName}</title>
+        <link rel="canonical" href="http://mysite.com/example" />
+      </Helmet>
       <Slate
         editor={editor}
         value={slateValue}
@@ -107,7 +111,7 @@ const SyncEditor = ({
           <BlockButton format="block-quote" icon="format_quote" />
           <BlockButton format="numbered-list" icon="format_list_numbered" />
           <BlockButton format="bulleted-list" icon="format_list_bulleted" />
-          <Header />
+          <FileName>{singleDocument.fileName}</FileName>
         </ToolbarWrapper>
         <Wrapper>
           <Editable
@@ -150,6 +154,10 @@ const ToolbarWrapper = styled.div`
   color: white;
   font-family: Helvetica;
   font-weight: 300;
+`;
+
+const FileName = styled.h1`
+  text-align: center;
 `;
 
 const mapState = (state) => ({

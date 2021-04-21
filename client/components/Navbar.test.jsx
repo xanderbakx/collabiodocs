@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { render } from '@testing-library/react';
-import Header from './Header';
+import Navbar from './Navbar';
 
 // afterEach(cleanup)
 
-describe('Header Component', () => {
+describe('Navbar Component', () => {
   test('should display proper text', () => {
     // const { getAllByText } = render(<Header />);
     // const titleText = getAllByText('Collaborative Document');

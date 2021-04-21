@@ -1,34 +1,39 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-shadow */
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import { Button } from '../styles/buttons';
+import DocCard from './DocCard';
+import NewDoc from './NewDoc';
 
 import { getDocuments } from '../store';
 
 const DocGrid = ({ documents, getDocuments }) => {
+  console.log('documents -->', documents);
   useEffect(() => {
-    getDocuments([]);
-  }, [getDocuments]);
+    getDocuments();
+  }, []);
+
+  const [overlay, setOverlay] = useState(false);
+
+  const handleNewDoc = () => {
+    setOverlay(true);
+  };
 
   return (
     <>
+      <Helmet>
+        <title>Documents</title>
+      </Helmet>
       <h1>DocGrid</h1>
-      <Button type="submit" variant="contained">
+      <Button onClick={handleNewDoc} type="submit" variant="contained">
         New Document
       </Button>
+      {overlay ? <NewDoc /> : ''}
       <div>
         {documents.map((document) => (
-          <div key={document._id}>
-            <h1>{document.fileName}</h1>
-            <h1>{document.body}</h1>
-            <Link to={`/document/${document._id}`}>
-              <Button type="submit" variant="contained">
-                Open
-              </Button>
-            </Link>
-          </div>
+          <DocCard document={document} key={document._id} />
         ))}
       </div>
     </>
