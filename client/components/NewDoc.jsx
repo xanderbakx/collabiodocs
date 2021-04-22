@@ -2,10 +2,13 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
+import { useAuth0 } from '@auth0/auth0-react';
+
 import { createSingleDocument, getDocuments } from '../store';
 import { Button } from '../styles/buttons';
 
 const NewDoc = ({ newDoc, getDocuments }) => {
+  const { user, isAuthenticated } = useAuth0();
   const { register, handleSubmit } = useForm();
 
   const initialValue = [
@@ -16,11 +19,15 @@ const NewDoc = ({ newDoc, getDocuments }) => {
   ];
 
   const onSubmit = (data) => {
-    newDoc({
-      fileName: data.fileName,
-      userId: 1234545,
-      body: JSON.stringify(initialValue),
-    });
+    if (isAuthenticated) {
+      console.log(user.email);
+      newDoc({
+        fileName: data.fileName,
+        email: user.email,
+        body: JSON.stringify(initialValue),
+      });
+    }
+
     getDocuments();
   };
   return (
