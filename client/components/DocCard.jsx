@@ -18,7 +18,7 @@ const DocCard = ({ document, deleteDoc }) => {
       <Button onClick={handleDelete}>
         <Icon>cancel</Icon>
       </Button>
-      <LinkCard to={`/document/${document._id}`}>
+      <LinkCard to={`/documents/${document._id}`}>
         <Card key={document._id}>
           <Title>{document.fileName}</Title>
         </Card>

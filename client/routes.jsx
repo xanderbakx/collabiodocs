@@ -7,7 +7,7 @@ import {
 
 const Routes = () => (
   <Switch>
-    <Route path="/document/:id" component={Document} />
+    <Route path="/documents/:id" component={Document} />
     <Route path="/documents" component={DocGrid} />
     <Route path="/profile" component={Profile} />
     <Route path="/" component={Home} />
