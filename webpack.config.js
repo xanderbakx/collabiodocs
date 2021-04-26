@@ -1,3 +1,5 @@
+const DotenvWebpackPlugin = require("dotenv-webpack");
+
 const isDev = process.env.NODE_ENV === "development";
 
 module.exports = {
@@ -14,6 +16,7 @@ module.exports = {
   watchOptions: {
     ignored: /node_modules/,
   },
+  plugins: [new DotenvWebpackPlugin()],
   module: {
     rules: [
       {

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -7,7 +8,6 @@ const fs = require('fs');
 
 const app = express();
 let server;
-require('dotenv').config();
 
 if (process.env.NODE_ENV === 'development') {
   const key = fs.readFileSync(path.join(__dirname, '/key.pem'));
