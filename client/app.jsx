@@ -16,6 +16,7 @@ render(
         domain="xanderbakx.us.auth0.com"
         clientId="Ll0ZztimqK0nfj9roV8JCyccvlES5s7X"
         redirectUri={window.location.origin}
+        audience="https://api/docs"
       >
         <App />
       </Auth0Provider>

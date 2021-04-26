@@ -1,5 +1,4 @@
 const router = require('express').Router();
-
 const { Document } = require('../db/models');
 
 module.exports = router;
@@ -7,6 +6,10 @@ module.exports = router;
 // GET all documents
 router.get('/', async (req, res, next) => {
   try {
+    const { user } = req;
+    if (user) {
+      console.log('doc-user --->', user);
+    }
     const documents = await Document.find();
     res.json(documents);
   } catch (error) {
