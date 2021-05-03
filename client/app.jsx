@@ -13,8 +13,8 @@ render(
   <Provider store={store}>
     <Router history={history}>
       <Auth0Provider
-        domain="xanderbakx.us.auth0.com"
-        clientId="Ll0ZztimqK0nfj9roV8JCyccvlES5s7X"
+        domain={process.env.AUTH0_DOMAIN}
+        clientId={process.env.SPA_CLIENT_ID}
         redirectUri={window.location.origin}
         audience="https://api/docs"
       >

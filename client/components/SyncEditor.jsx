@@ -30,6 +30,7 @@ const SyncEditor = ({
   getSingleDocument,
   updateSingleDocument,
 }) => {
+  // debugger;
   const params = useParams();
 
   // Display document content from specified ID
@@ -59,13 +60,17 @@ const SyncEditor = ({
   const handleSave = () => {
     const { id } = params;
     console.log('saved -->', slateValue);
-    // setSlateValue(slateValue);
+    setSlateValue(slateValue);
     updateSingleDocument(id, { body: JSON.stringify(slateValue) });
-    socket.emit('update-content', slateValue);
+    // socket.emit('update-content', slateValue);
   };
 
   useEffect(() => {
     // Socket Connections
+    // socket.once('set-content', () => {
+    //   console.log('set socket', singleDocument.body)
+    //   setSlateValue(singleDocument.body)
+    // })
     socket.on('update-content', (value) => {
       console.log('socket value --->', value);
       setSlateValue(value);
@@ -85,13 +90,13 @@ const SyncEditor = ({
     <>
       <Helmet>
         <title>{singleDocument.fileName}</title>
-        <link rel="canonical" href="http://mysite.com/example" />
       </Helmet>
       <Slate
         editor={editor}
         value={slateValue}
         onChange={(value) => {
-          console.log('change', value);
+          console.log('on change slate value -->', slateValue);
+          console.log('on change value -->', value);
           setSlateValue(value);
           // Emit that new value from server to clients
           socket.emit('update-content', value);
