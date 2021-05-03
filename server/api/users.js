@@ -22,10 +22,14 @@ const getManagementApiJwt = () => {
   return new Promise((resolve, reject) => {
     const options = {
       method: 'POST',
-      url: 'https://xanderbakx.us.auth0.com/oauth/token',
+      url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
       headers: { 'content-type': 'application/json' },
-      body:
-        '{"client_id":"sdbpQm2LxqUoVZVkaySsLNtacVjiTFla","client_secret":"0Re3_rned8tEDnNCcrgdv5w05XOzUX3l3kSv9_AnEgxUtzyDP81Pgz2vgQsNKQHA","audience":"https://xanderbakx.us.auth0.com/api/v2/","grant_type":"client_credentials"}',
+      body: JSON.stringify({
+        client_id: process.env.SERVER_CLIENT_ID,
+        client_secret: process.env.SERVER_CLIENT_SECRET,
+        audience: 'https://xanderbakx.us.auth0.com/api/v2/',
+        grant_type: 'client_credentials',
+      }),
     };
 
     request(options, (error, response, body) => {

@@ -14,7 +14,7 @@ const NewDoc = ({ newDoc, getDocuments }) => {
   const initialValue = [
     {
       type: 'paragraph',
-      children: [{ text: 'hello' }],
+      children: [{ text: '' }],
     },
   ];
 

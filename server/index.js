@@ -56,8 +56,7 @@ const buildApp = () => {
     socket.on('update-content', (content) => {
       console.log('content --->', content[0]);
       // Broadcast event
-
-      io.emit('update-content', content);
+      socket.broadcast.emit('update-content', content);
     });
 
     socket.on('disconnect', () => {
