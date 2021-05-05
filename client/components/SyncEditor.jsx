@@ -49,6 +49,9 @@ const SyncEditor = ({
   // State of value of editor
   const [slateValue, setSlateValue] = useState(initialValue);
 
+  // Get username and room
+  const room = params.id;
+
   // Set state for document body
   useEffect(() => {
     if (!singleDocument.body) return;
@@ -66,11 +69,9 @@ const SyncEditor = ({
   };
 
   useEffect(() => {
-    // Socket Connections
-    // socket.once('set-content', () => {
-    //   console.log('set socket', singleDocument.body)
-    //   setSlateValue(singleDocument.body)
-    // })
+    // User has joined document room
+    socket.emit('join-room', room);
+    // Document change has been made
     socket.on('update-content', (value) => {
       console.log('socket value --->', value);
       setSlateValue(value);
@@ -95,11 +96,18 @@ const SyncEditor = ({
         editor={editor}
         value={slateValue}
         onChange={(value) => {
-          console.log('on change slate value -->', slateValue);
-          console.log('on change value -->', value);
-          setSlateValue(value);
+          // Filter out click operations
+          const ops = editor.operations.filter((o) => {
+            if (o) {
+              return o.type !== 'set_selection' && o.type !== 'set_value';
+            }
+            return false;
+          });
           // Emit that new value from server to clients
-          socket.emit('update-content', value);
+          if (ops.length) {
+            setSlateValue(value);
+            socket.emit('update-content', value);
+          }
         }}
       >
         <ToolbarWrapper>

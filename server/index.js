@@ -53,10 +53,16 @@ const buildApp = () => {
   // New socket connection
   io.on('connection', (socket) => {
     console.log(`New connection: ${socket.id}`);
-    socket.on('update-content', (content) => {
-      console.log('content --->', content[0]);
-      // Broadcast event
-      socket.broadcast.emit('update-content', content);
+
+    socket.on('join-room', (room) => {
+      console.log('room', room);
+      // User joins document room
+      socket.join(room);
+      // Changes to document
+      socket.on('update-content', (content) => {
+        // Broadcast event to document room
+        socket.broadcast.to(room).emit('update-content', content);
+      });
     });
 
     socket.on('disconnect', () => {

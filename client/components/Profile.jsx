@@ -20,7 +20,7 @@ const Profile = () => {
         },
       })
         .then((res) => res.json())
-        .then((json) => console.log('json user --->', json));
+        .then((jsonUser) => console.log('json user --->', jsonUser));
     });
   };
 

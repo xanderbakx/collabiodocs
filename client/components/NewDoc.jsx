@@ -9,7 +9,7 @@ import { Button } from '../styles/buttons';
 
 const NewDoc = ({ newDoc, getDocuments }) => {
   const { user, isAuthenticated } = useAuth0();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const initialValue = [
     {
@@ -20,16 +20,17 @@ const NewDoc = ({ newDoc, getDocuments }) => {
 
   const onSubmit = (data) => {
     if (isAuthenticated) {
-      console.log(user.email);
       newDoc({
         fileName: data.fileName,
         email: user.email,
+        name: user.name,
         body: JSON.stringify(initialValue),
       });
     }
-
+    reset();
     getDocuments();
   };
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
