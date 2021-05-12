@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useAuth0 } from '@auth0/auth0-react';
+import styled from 'styled-components';
 
 import { createSingleDocument, getDocuments } from '../store';
 import { Button } from '../styles/buttons';
@@ -49,16 +50,16 @@ const NewDoc = ({ newDoc, getDocuments }) => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="fileName">
-          Document Name
-          <input
+        <Label htmlFor="fileName">
+          <Input
             name="fileName"
             id="fileName"
             type="text"
+            placeholder="Document name"
             {...register('fileName')}
           />
-        </label>
-        <Button type="submit">Create</Button>
+        </Label>
+        <CreateButton type="submit">Create</CreateButton>
       </form>
     </>
   );
@@ -74,3 +75,24 @@ const mapDispatch = (dispatch) => ({
 });
 
 export default connect(null, mapDispatch)(NewDoc);
+
+const Label = styled.label`
+  margin-left: 1rem;
+`;
+const Input = styled.input`
+  height: 33px;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  border-radius: 0.2rem;
+  border: 1px solid lightgray;
+  &:focus {
+    outline: none;
+  }
+`;
+const CreateButton = styled(Button)`
+  background-color: darkseagreen;
+  border-radius: 0.2rem;
+  &:hover {
+    background-color: #b1cab1;
+  }
+`;

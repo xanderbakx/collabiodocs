@@ -111,9 +111,9 @@ const SyncEditor = ({
         }}
       >
         <ToolbarWrapper>
-          <Button variant="contained" type="submit" onClick={handleSave}>
+          <SaveButton variant="contained" type="submit" onClick={handleSave}>
             Save
-          </Button>
+          </SaveButton>
           <MarkButton format="bold" icon="format_bold" />
           <MarkButton format="italic" icon="format_italic" />
           <MarkButton format="underline" icon="format_underlined" />
@@ -124,8 +124,8 @@ const SyncEditor = ({
           <BlockButton format="block-quote" icon="format_quote" />
           <BlockButton format="numbered-list" icon="format_list_numbered" />
           <BlockButton format="bulleted-list" icon="format_list_bulleted" />
-          <FileName>{singleDocument.fileName}</FileName>
         </ToolbarWrapper>
+        <FileName>{singleDocument.fileName}</FileName>
         <Wrapper>
           <Editable
             renderElement={renderElement}
@@ -153,7 +153,7 @@ const Wrapper = styled.div`
   position: absolute;
   width: 816px;
   height: 1056px;
-  left: 49.5%;
+  left: 50%;
   margin: 30px 0 50px -410px;
   padding: 50px 50px;
   background-color: white;
@@ -161,12 +161,21 @@ const Wrapper = styled.div`
 `;
 
 const ToolbarWrapper = styled.div`
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 2fr repeat(9, 1fr) 18fr;
   background: #9393a8;
   color: white;
   font-family: Helvetica;
   font-weight: 300;
+`;
+
+const SaveButton = styled(Button)`
+  background-color: darkseagreen;
+  border: none;
+  border-radius: 0.2rem;
+  &:hover {
+    background-color: #b1cab1;
+  }
 `;
 
 const FileName = styled.h1`
