@@ -13,7 +13,6 @@ const Profile = () => {
   const getUser = () => {
     getAccessTokenSilently().then((token) => {
       console.log(token);
-      console.log(process.env.PORT);
       fetch(`https://localhost:${process.env.PORT}/api/users`, {
         headers: {
           Authorization: `Bearer ${token}`,

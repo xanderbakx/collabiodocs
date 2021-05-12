@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-// import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 import { Button } from '../styles/buttons';
 import DocCard from './DocCard';
@@ -12,18 +12,15 @@ import NewDoc from './NewDoc';
 import { getDocuments } from '../store';
 
 const DocGrid = ({ documents, getDocuments }) => {
-  // const {
-  //   user,
-  //   isAuthenticated,
-  //   isLoading,
-  //   getAccessTokenSilently,
-  // } = useAuth0();
+  const {
+    isAuthenticated,
+    // getAccessTokenSilently,
+  } = useAuth0();
 
   // const getUser = () => {
   //   getAccessTokenSilently().then((token) => {
-  //     console.log(token);
-  //     console.log(process.env.PORT);
-  //     fetch(`https://localhost:${process.env.PORT}/api/documents`, {
+  //     console.log('access token', token);
+  //     fetch(`https://localhost:${process.env.PORT}/api/users`, {
   //       headers: {
   //         Authorization: `Bearer ${token}`,
   //       },
@@ -34,12 +31,11 @@ const DocGrid = ({ documents, getDocuments }) => {
   // };
 
   useEffect(() => {
-    // if (isAuthenticated) {
-    //   console.log(isAuthenticated)
-    //   getUser()
-    // }
-    getDocuments();
-  }, []);
+    if (isAuthenticated) {
+      // getUser()
+      getDocuments();
+    }
+  }, [isAuthenticated]);
 
   const [overlay, setOverlay] = useState(false);
 
@@ -56,6 +52,7 @@ const DocGrid = ({ documents, getDocuments }) => {
       <Button onClick={handleNewDoc} type="submit" variant="contained">
         {overlay ? 'Cancel' : 'New Document'}
       </Button>
+      {/* <Button type="submit" onClick={getUser}>Get User</Button> */}
       {overlay ? <NewDoc /> : ''}
       <div>
         {documents.map((document) => (

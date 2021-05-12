@@ -8,8 +8,21 @@ import { createSingleDocument, getDocuments } from '../store';
 import { Button } from '../styles/buttons';
 
 const NewDoc = ({ newDoc, getDocuments }) => {
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const { register, handleSubmit, reset } = useForm();
+
+  const getUser = () => {
+    getAccessTokenSilently().then((token) => {
+      console.log('access token', token);
+      fetch(`https://localhost:${process.env.PORT}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((jsonUser) => console.log('json user --->', jsonUser));
+    });
+  };
 
   const initialValue = [
     {
@@ -20,7 +33,9 @@ const NewDoc = ({ newDoc, getDocuments }) => {
 
   const onSubmit = (data) => {
     if (isAuthenticated) {
+      getUser();
       newDoc({
+        userId: user.sub,
         fileName: data.fileName,
         email: user.email,
         name: user.name,

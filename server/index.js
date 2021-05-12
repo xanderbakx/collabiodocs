@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+
 let server;
 
 if (process.env.NODE_ENV === 'development') {
