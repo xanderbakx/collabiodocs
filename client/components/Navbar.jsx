@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Button } from '../styles/buttons';
@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const getLinks = () => {
     links = [
-      { id: 1, name: 'Documents', path: '/documents' },
+      { id: 1, name: 'Documents', path: '/' },
       { id: 2, name: `${user.name}`, path: '/profile' },
     ];
   };
@@ -22,7 +22,9 @@ const Navbar = () => {
 
   return (
     <NavbarWrapper>
-      <Title>Docs Clone</Title>
+      <TitleLink to="/">
+        <Title>Docs Clone</Title>
+      </TitleLink>
       {isAuthenticated ? (
         <>
           {links.map((link) => (
@@ -46,15 +48,20 @@ const Navbar = () => {
 
 export default Navbar;
 
+const TitleLink = styled(Link)`
+  text-decoration: none;
+  margin-right: auto;
+`;
+
 const Title = styled.h1`
   color: white;
-  margin-right: auto;
   font-size: 150%;
   padding: 12px 16px;
 `;
 const NavbarWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   background: rebeccapurple;
   color: white;
   font-family: Helvetica;
