@@ -4,6 +4,10 @@ const { Schema } = mongoose;
 
 const documentSchema = new Schema(
   {
+    userId: {
+      type: String,
+      required: true,
+    },
     fileName: {
       type: String,
       required: true,
