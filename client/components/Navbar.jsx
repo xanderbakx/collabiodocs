@@ -27,7 +27,7 @@ const Navbar = ({ user, getUser }) => {
   return (
     <NavbarWrapper>
       <TitleLink to="/">
-        <Title>Docs Clone</Title>
+        <Title>Collabio</Title>
       </TitleLink>
       {user.id ? (
         <>
