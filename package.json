@@ -1,7 +1,7 @@
 {
-  "name": "google-docs-clone",
+  "name": "collabio",
   "version": "1.0.0",
-  "description": "Google Docs Clone using Socket.io to collaboratively edit",
+  "description": "Collabio is a collaborative rich text editor that lets you create, save, and modify documents with other users",
   "main": "index.js",
   "scripts": {
     "build-client-watch": "webpack -w",
