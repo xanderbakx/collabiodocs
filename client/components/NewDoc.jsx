@@ -2,28 +2,13 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
-import { useAuth0 } from '@auth0/auth0-react';
 import styled from 'styled-components';
 
 import { createSingleDocument, getDocuments } from '../store';
 import { Button } from '../styles/buttons';
 
-const NewDoc = ({ newDoc, getDocuments }) => {
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+const NewDoc = ({ newDoc, getDocuments, user }) => {
   const { register, handleSubmit, reset } = useForm();
-
-  const getUser = () => {
-    getAccessTokenSilently().then((token) => {
-      console.log('access token', token);
-      fetch(`https://localhost:${process.env.PORT}/api/users`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((jsonUser) => console.log('json user --->', jsonUser));
-    });
-  };
 
   const initialValue = [
     {
@@ -33,13 +18,12 @@ const NewDoc = ({ newDoc, getDocuments }) => {
   ];
 
   const onSubmit = (data) => {
-    if (isAuthenticated) {
-      getUser();
+    if (user) {
+      console.log(user);
       newDoc({
-        userId: user.sub,
+        userId: user.id,
         fileName: data.fileName,
-        email: user.email,
-        name: user.name,
+        name: user.displayName,
         body: JSON.stringify(initialValue),
       });
     }
@@ -65,16 +49,16 @@ const NewDoc = ({ newDoc, getDocuments }) => {
   );
 };
 
-// const mapState = (state) => ({
-//   document: state.singleDocument,
-// })
+const mapState = (state) => ({
+  user: state.user,
+});
 
 const mapDispatch = (dispatch) => ({
   newDoc: (document) => dispatch(createSingleDocument(document)),
   getDocuments: () => dispatch(getDocuments()),
 });
 
-export default connect(null, mapDispatch)(NewDoc);
+export default connect(mapState, mapDispatch)(NewDoc);
 
 const Label = styled.label`
   margin-left: 1rem;
