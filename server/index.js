@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const session = require('express-session');
 const passport = require('passport');
+const mongoStore = require('connect-mongo');
 
 const app = express();
 
@@ -30,7 +31,10 @@ module.exports = app;
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   cookie: {},
-  resave: true,
+  store: mongoStore.create({
+    mongoUrl: process.env.DB_URL,
+  }),
+  resave: false,
   saveUninitialized: false,
 };
 
