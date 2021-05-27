@@ -1,28 +1,16 @@
 const router = require('express').Router();
-// const jwt = require('express-jwt');
-// const jwks = require('jwks-rsa');
 
 const { Document } = require('../db/models');
 
 module.exports = router;
 
-// const jwtCheck = jwt({
-//   secret: jwks.expressJwtSecret({
-//     cache: true,
-//     rateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: 'https://xanderbakx.us.auth0.com/.well-known/jwks.json',
-//   }),
-//   audience: 'https://api/docs',
-//   issuer: 'https://xanderbakx.us.auth0.com/',
-//   algorithms: ['RS256'],
-// });
-
 // GET all documents
 router.get('/', async (req, res, next) => {
+  const { user } = req;
   try {
-    console.log('doc-user -------------------->', req.user);
-    const documents = await Document.find();
+    const documents = await Document.find({
+      userId: user.id,
+    });
     res.json(documents);
   } catch (error) {
     next(error);

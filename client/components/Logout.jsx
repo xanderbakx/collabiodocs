@@ -1,19 +1,18 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { connect } from 'react-redux';
 import { Button } from '../styles/buttons';
 
-const LogoutButton = () => {
-  const { logout } = useAuth0();
+import { removeUser } from '../store';
 
-  return (
-    <Button
-      variant="contained"
-      type="submit"
-      onClick={() => logout({ returnTo: window.location.origin })}
-    >
-      Log Out
-    </Button>
-  );
-};
+// eslint-disable-next-line no-shadow
+const LogoutButton = ({ removeUser }) => (
+  <Button variant="contained" type="submit" onClick={removeUser}>
+    Log Out
+  </Button>
+);
 
-export default LogoutButton;
+const mapDispatch = (dispatch) => ({
+  removeUser: () => dispatch(removeUser()),
+});
+
+export default connect(null, mapDispatch)(LogoutButton);

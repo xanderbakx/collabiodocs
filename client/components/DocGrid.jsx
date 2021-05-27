@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { useAuth0 } from '@auth0/auth0-react';
 import styled from 'styled-components';
 
 import { Button } from '../styles/buttons';
@@ -12,31 +11,12 @@ import NewDoc from './NewDoc';
 
 import { getDocuments } from '../store';
 
-const DocGrid = ({ documents, getDocuments }) => {
-  const {
-    isAuthenticated,
-    // getAccessTokenSilently,
-  } = useAuth0();
-
-  // const getUser = () => {
-  //   getAccessTokenSilently().then((token) => {
-  //     console.log('access token', token);
-  //     fetch(`https://localhost:${process.env.PORT}/api/users`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((jsonUser) => console.log('json user --->', jsonUser));
-  //   });
-  // };
-
+const DocGrid = ({ documents, getDocuments, user }) => {
   useEffect(() => {
-    if (isAuthenticated) {
-      // getUser()
+    if (user.id) {
       getDocuments();
     }
-  }, [isAuthenticated]);
+  }, [user.id]);
 
   const [overlay, setOverlay] = useState(false);
 
@@ -49,7 +29,7 @@ const DocGrid = ({ documents, getDocuments }) => {
       <Helmet>
         <title>Documents</title>
       </Helmet>
-      {isAuthenticated ? (
+      {user.id ? (
         <>
           <h1 className="title">DocGrid</h1>
           <NewDocButton
@@ -82,6 +62,7 @@ const DocGrid = ({ documents, getDocuments }) => {
 
 const mapState = (state) => ({
   documents: state.allDocuments,
+  user: state.user,
 });
 
 const mapDispatch = (dispatch) => ({

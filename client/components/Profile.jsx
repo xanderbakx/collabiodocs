@@ -1,47 +1,19 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 
-const Profile = () => {
-  const {
-    user,
-    isAuthenticated,
-    isLoading,
-    getAccessTokenSilently,
-  } = useAuth0();
+const Profile = ({ user }) => user.id && (
+<div>
+  <Helmet>
+    <title>{user.displayName}</title>
+  </Helmet>
+  <img src={user.picture} alt={user.displayName} />
+  <h2>{user.displayName}</h2>
+</div>
+);
 
-  const getUser = () => {
-    getAccessTokenSilently().then((token) => {
-      console.log(token);
-      fetch(`https://localhost:${process.env.PORT}/api/users`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((jsonUser) => console.log('json user --->', jsonUser));
-    });
-  };
+const mapState = (state) => ({
+  user: state.user,
+});
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
-
-  return (
-    isAuthenticated && (
-      <div>
-        <Helmet>
-          <title>{user.name}</title>
-        </Helmet>
-        <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
-        <p>{user.email}</p>
-        <button type="submit" onClick={getUser}>
-          Click
-        </button>
-      </div>
-    )
-  );
-};
-
-export default Profile;
+export default connect(mapState)(Profile);

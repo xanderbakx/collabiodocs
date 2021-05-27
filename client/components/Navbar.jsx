@@ -1,31 +1,35 @@
-import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Button } from '../styles/buttons';
 import { Login, Logout } from '.';
 
-const Navbar = () => {
-  const { user, isAuthenticated } = useAuth0();
+import { getUser } from '../store';
+
+// eslint-disable-next-line no-shadow
+const Navbar = ({ user, getUser }) => {
+  useEffect(() => {
+    getUser();
+  }, [user.id]);
   let links;
 
   const getLinks = () => {
     links = [
       { id: 1, name: 'Documents', path: '/' },
-      { id: 2, name: `${user.name}`, path: '/profile' },
+      { id: 2, name: user.displayName, path: '/profile' },
     ];
   };
 
-  // TODO: IS THIS HACKY?
-  if (isAuthenticated) getLinks();
+  getLinks();
 
   return (
     <NavbarWrapper>
       <TitleLink to="/">
         <Title>Docs Clone</Title>
       </TitleLink>
-      {isAuthenticated ? (
+      {user.id ? (
         <>
           {links.map((link) => (
             <NavLink
@@ -46,7 +50,15 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+const mapState = (state) => ({
+  user: state.user,
+});
+
+const mapDispatch = (dispatch) => ({
+  getUser: () => dispatch(getUser()),
+});
+
+export default connect(mapState, mapDispatch)(Navbar);
 
 const TitleLink = styled(Link)`
   text-decoration: none;

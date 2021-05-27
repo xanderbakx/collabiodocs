@@ -5,6 +5,8 @@ const helmet = require('helmet');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const session = require('express-session');
+const passport = require('passport');
 
 const app = express();
 
@@ -25,6 +27,13 @@ const port = process.env.PORT || 3000;
 
 module.exports = app;
 
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET,
+  cookie: {},
+  resave: true,
+  saveUninitialized: false,
+};
+
 const buildApp = () => {
   // Logging middleware
   app.use(morgan('dev'));
@@ -39,12 +48,21 @@ const buildApp = () => {
   // Body parsing middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(session(sessionConfig));
 
-  // API Routes
-  app.use('/api', require('./api'));
+  // passport.use(strategy);
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  passport.serializeUser((user, done) => done(null, user));
+  passport.deserializeUser((user, done) => done(null, user));
 
   // Static middleware
   app.use(express.static(path.join(__dirname, '..', 'public')));
+
+  // API Routes
+  app.use('/api', require('./api'));
+  app.use('/auth', require('./auth'));
 
   // index.html
   app.use('*', (req, res) => {
